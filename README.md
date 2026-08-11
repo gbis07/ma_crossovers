@@ -65,20 +65,14 @@ ma_crossovers/
 
 Momentum is first measured using the difference between a short-term and long-term exponential moving average:
 
-\[
-x_{k,t}
-=
-EMA(P_t,n_{k,s})
--
-EMA(P_t,n_{k,l})
-\]
+ $x_{k,t} = EMA(P_t,n_{k,s}) - EMA(P_t,n_{k,l}) $
 
 where:
 
-- \(P_t\) is the asset price
-- \(n_{k,s}\) is the short EMA horizon
-- \(n_{k,l}\) is the long EMA horizon
-- \(k\) identifies the crossover specification
+- $P_t$ is the asset price
+- $n_{k,s}$ is the short EMA horizon
+- $n_{k,l}$ is the long EMA horizon
+- $k$ identifies the crossover specification
 
 The project evaluates three EMA pairs:
 
@@ -90,15 +84,11 @@ The project evaluates three EMA pairs:
 
 A positive crossover indicates upward momentum:
 
-\[
-x_{k,t} > 0
-\]
+$x_{k,t} > 0 $
 
 while a negative crossover indicates downward momentum:
 
-\[
-x_{k,t} < 0
-\]
+$x_{k,t} < 0$
 
 Using several horizons allows the strategy to capture trends operating over different time scales rather than relying on a single moving-average specification.
 
@@ -110,12 +100,7 @@ Raw moving-average differences are difficult to compare across assets because cr
 
 Each crossover signal is therefore normalized by rolling price volatility:
 
-\[
-y_{k,t}
-=
-\frac{x_{k,t}}
-{\sigma(P_t)}
-\]
+$y_{k,t} = \frac{x_{k,t}} {\sigma(P_t)}$
 
 For cryptocurrency markets, the project uses a **91-day rolling window**, corresponding approximately to three months in a continuously traded market.
 
@@ -127,12 +112,8 @@ This converts the raw crossover into a volatility-adjusted momentum measure.
 
 The volatility-adjusted crossover is normalized again using the historical volatility of the signal itself:
 
-\[
-z_{k,t}
-=
-\frac{y_{k,t}}
-{\sigma(y_k)}
-\]
+$z_{k,t} = \frac{y_{k,t}} {\sigma(y_k)}$
+
 
 A **365-day rolling window** is used for cryptocurrency markets.
 
@@ -144,21 +125,11 @@ This second normalization makes the crossover signals more comparable through ti
 
 The normalized crossover is transformed using a nonlinear response function:
 
-\[
-u(z)
-=
-\frac{
-z e^{-z^2/4}
-}{
-\sqrt{2}e^{-1/2}
-}
-\]
+$u(z) = \frac{ z e^{-z^2/4}}{ \sqrt{2}e^{-1/2}}$
 
 The transformation produces a bounded momentum exposure approximately satisfying:
 
-\[
--1 \leq u(z) \leq 1
-\]
+$-1 \leq u(z) \leq 1$
 
 Rather than allowing increasingly extreme crossover values to generate increasingly large positions, the nonlinear transformation reduces exposure when signals become unusually large.
 
@@ -170,14 +141,9 @@ This limits the influence of extreme observations and produces a more controlled
 
 The three transformed EMA crossover signals are combined using equal weighting:
 
-\[
-Signal_t
-=
-\frac{1}{K}
-\sum_{k=1}^{K}u_{k,t}
-\]
+$Signal_t = \frac{1}{K} \sum_{k=1}^{K}u_{k,t}$
 
-where \(K=3\).
+where $K=3$.
 
 The resulting signal summarizes momentum across short-, medium-, and longer-term EMA horizons.
 
@@ -195,13 +161,9 @@ The time-series strategy determines each asset's exposure directly from its own 
 
 Portfolio weights are approximately:
 
-\[
-w_{i,t}
-=
-\frac{Signal_{i,t}}{N_t}
-\]
+$w_{i,t} = \frac{Signal_{i,t}}{N_t}$
 
-where \(N_t\) represents the number of assets with valid signals.
+where $N_t$ represents the number of assets with valid signals.
 
 The strategy therefore:
 
@@ -212,11 +174,7 @@ The strategy therefore:
 
 Portfolio returns use **lagged weights**:
 
-\[
-R_{p,t}
-=
-\sum_i w_{i,t-1}R_{i,t}
-\]
+$R_{p,t} = \sum_i w_{i,t-1}R_{i,t}$
 
 ensuring that today's return is generated using information available before the return occurred.
 
@@ -317,9 +275,7 @@ Metrics include:
 
 Because cryptocurrency markets trade continuously, annualization assumes:
 
-\[
-365
-\]
+$365$
 
 trading periods per year for daily data.
 
@@ -331,22 +287,14 @@ Bitcoin is used as the primary cryptocurrency market benchmark.
 
 Strategy returns are estimated using:
 
-\[
-R_{strategy,t}
-=
-\alpha
-+
-\beta R_{BTC,t}
-+
-\epsilon_t
-\]
+$R_{strategy,t} =\alpha + \beta R_{BTC,t}+ \epsilon_t$
 
 The regression reports:
 
 - Annualized alpha
 - Alpha t-statistic
 - Bitcoin beta
-- \(R^2\)
+- $R^2$
 - Strategy/Bitcoin correlation
 
 HAC/Newey-West robust standard errors are used to account for potential heteroskedasticity and autocorrelation in strategy returns.
